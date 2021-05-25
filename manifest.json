@@ -14,9 +14,9 @@
             "ignoreVersion" : true
         },
         "splashscreen" : {
-            "alwaysShowBeforeRender" : true,
+            "alwaysShowBeforeRender" : false,
             "waiting" : true,
-            "autoclose" : true,
+            "autoclose" : false,
             "delay" : 0
         },
         /* 模块配置 */
@@ -48,7 +48,7 @@
                     "<uses-permission android:name=\"android.permission.BLUETOOTH\"/>",
                     "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\"/>"
                 ],
-                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
+                "abiFilters" : [ "arm64-v8a" ]
             },
             /* ios打包配置 */
             "ios" : {},
@@ -58,7 +58,12 @@
                 "ad" : {}
             },
             "splashscreen" : {
-                "androidStyle" : "default"
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "C:/Users/BLab/Desktop/11.png",
+                    "xhdpi" : "C:/Users/BLab/Desktop/22.png",
+                    "xxhdpi" : "C:/Users/BLab/Desktop/33.png"
+                }
             },
             "icons" : {
                 "android" : {
@@ -108,6 +113,9 @@
                     "parameters" : {}
                 }
             }
+        },
+        "uniStatistics" : {
+            "enable" : false
         }
     },
     /* 快应用特有相关 */

@@ -1,31 +1,36 @@
 <template>
 	<view style="height: 100%;">
 		<common-header :statusBarHeight="systemInfo.statusBarHeight" :floorArray="floorList" :roomArray="roomList"
-		 @floorSelect="floorSelect" @roomSelect="roomSelect" :selectedFloorId="selectedFloorId" :selectedRoomId="selectedRoomId"
-		 @searchConfirm="doSearchDevice"></common-header>
+			@floorSelect="floorSelect" @roomSelect="roomSelect" :selectedFloorId="selectedFloorId"
+			:selectedRoomId="selectedRoomId" @searchConfirm="doSearchDevice"></common-header>
 		<view class="main-container" :style="{'padding-top': 135 + 750 * systemInfo.statusBarHeight / 375 + 'rpx'}">
 			<view class="main-box">
 				<view class="device-line">
 					<view class="device-card" v-for="(device,index) in realDeviceList" :key="device.id">
 						<view class="collect-box">
-							<u-icon :name="device.favorite?'star-fill':'star'" size="40" :color="device.favorite?'#F29100':'#c8c9cc'" @click="changeFavorite(device)"></u-icon>
+							<u-icon :name="device.favorite?'star-fill':'star'" size="40"
+								:color="device.favorite?'#F29100':'#c8c9cc'" @click="changeFavorite(device)"></u-icon>
 							<text v-show="!device.online">设备离线</text>
 						</view>
 						<view class="icon-name-box">
-							<u-image width="100rpx" height="100rpx" :src="device.open?'../../static/device/'+device.iconPath+'-active.png':'../../static/device/'+device.iconPath+'.png'"></u-image>
+							<u-image width="100rpx" height="100rpx"
+								:src="device.open?'../../static/device/'+device.iconPath+'-active.png':'../../static/device/'+device.iconPath+'.png'">
+							</u-image>
 							<text>{{device.name}}</text>
-							<text class="openText" v-if="device.type==1&&device.subType==1">{{device.open?'打开':'关闭'}}</text>
-							<text class="openText" v-if="device.type==1&&device.subType==2">{{device.rate>0?device.rate+'%':'关闭'}}</text>
+							<text class="openText"
+								v-if="device.type==1&&device.subType==1">{{device.open?'打开':'关闭'}}</text>
+							<text class="openText"
+								v-if="device.type==1&&device.subType==2">{{device.rate>0?device.rate+'%':'关闭'}}</text>
 						</view>
 						<!-- 开关型设备 -->
 						<view class="action-box" v-if="device.type==1&&device.subType==1">
-							<u-switch v-model="device.open" active-color="#42B983" size="40" :loading="false" @change="doControlDevice(device,index)"
-							 :disabled="!device.online"></u-switch>
+							<u-switch v-model="device.open" active-color="#42B983" size="40" :loading="false"
+								@change="doControlDevice(device,index)" :disabled="!device.online"></u-switch>
 						</view>
 						<!-- 比例型设备 -->
 						<view class="action-rate-box" v-if="device.type==1&&device.subType==2">
-							<u-slider v-model="device.rate" height="40" activeColor="#42B983" block-width="50" @end="doControlDevice(device,index)"
-							 :disabled="!device.online"></u-slider>
+							<u-slider v-model="device.rate" height="40" activeColor="#42B983" block-width="50"
+								@end="doControlDevice(device,index)" :disabled="!device.online"></u-slider>
 						</view>
 						<view class="action-temp-box" v-if="device.type==2&&device.subType==1">
 							<text style="color: #000000;">温度: {{device.payload.temperature}}℃ </text>
@@ -35,13 +40,17 @@
 					<!-- 无设备提示 -->
 					<view class="no-device-wrapper" v-if="deviceList.length==0">
 						<u-empty src="../../static/device-64.png" text="无设备">
-							<u-button type="success" slot="bottom" style="margin-top: 50rpx;" @click="selectedFamily?gotoDeviceManage():gotoFamilyManage()">{{selectedFamily?'添加设备':'请先完善家庭信息'}}</u-button>
+							<u-button type="success" slot="bottom" style="margin-top: 50rpx;"
+								@click="selectedFamily?gotoDeviceManage():gotoFamilyManage()">
+								{{selectedFamily?'添加设备':'请先完善家庭信息'}}
+							</u-button>
 						</u-empty>
 					</view>
 					<!-- 未搜索到设备提示 -->
 					<view class="no-device-wrapper" v-if="deviceList.length!=0&&realDeviceList.length==0">
 						<u-empty src="../../static/device-64.png" text="未搜索到设备">
-							<u-button type="success" slot="bottom" style="margin-top: 50rpx;" @click="gotoDeviceManage">添加设备</u-button>
+							<u-button type="success" slot="bottom" style="margin-top: 50rpx;" @click="gotoDeviceManage">
+								添加设备</u-button>
 						</u-empty>
 					</view>
 				</view>
@@ -112,7 +121,7 @@
 			}
 		},
 		computed: {
-			...mapState(['selectedFamily', 'selectedFloorId', 'selectedRoomId', 'systemInfo'])
+			...mapState(['selectedFamily', 'selectedFloorId', 'selectedRoomId', 'systemInfo', 'login'])
 		},
 		methods: {
 			...mapMutations(['saveSelectedFloorId', 'saveSelectedRoomId']),

@@ -2,159 +2,170 @@
 	"easycom": {
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"app-plus": {
-				"titleNView": false,
-				"scrollIndicator": "none"
+	"pages": [
+		{
+			"path": "pages/guide/guide",
+			"style": {
+				"app-plus": {
+					"titleNView": false,
+					"scrollIndicator": "none"
+				}
 			}
-		}
-	}, {
-		"path": "pages/my/my",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/rooms/rooms",
-		"style": {
-			"app-plus": {
-				"titleNView": false,
-				"scrollIndicator": "none"
-			}
-		}
-	}, {
-		"path": "pages/sence/sence",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/systeminfo/systeminfo",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/systeminfo/versioninfo",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/systeminfo/userprotocol",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/login/login",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/setting/setting",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/devicemanage/devicemanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/roommanage/roommanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/messagemanage/messagemanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/messagemanage/messagedetail",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/floormanage/floormanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/familymanage/familymanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
-	}, {
-		"path": "pages/assistentdevice/assistentdevice",
-		"style": {
-			"app-plus": {
-				"titleNView": false
-			}
-		}
 
-	}, {
-		"path": "pages/assistentdevice/beaconmanage/beaconmanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
+		}, {
+			"path": "pages/index/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false,
+					"scrollIndicator": "none"
+				}
 			}
-		}
-
-	}, {
-		"path": "pages/assistentdevice/watchmanage/watchmanage",
-		"style": {
-			"app-plus": {
-				"titleNView": false
+		}, {
+			"path": "pages/my/my",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
 			}
-		}
-
-	}, {
-		"path": "pages/regist/regist",
-		"style": {
-			"app-plus": {
-				"titleNView": false
+		}, {
+			"path": "pages/rooms/rooms",
+			"style": {
+				"app-plus": {
+					"titleNView": false,
+					"scrollIndicator": "none"
+				}
 			}
-		}
-
-	}, {
-		"path": "pages/myinfo/myinfo",
-		"style": {
-			"app-plus": {
-				"titleNView": false
+		}, {
+			"path": "pages/sence/sence",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
 			}
-		}
+		}, {
+			"path": "pages/systeminfo/systeminfo",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/systeminfo/versioninfo",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/systeminfo/userprotocol",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/setting/setting",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/devicemanage/devicemanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/roommanage/roommanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/messagemanage/messagemanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/messagemanage/messagedetail",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/floormanage/floormanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/familymanage/familymanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/assistentdevice/assistentdevice",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
 
-	}],
+		}, {
+			"path": "pages/assistentdevice/beaconmanage/beaconmanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/assistentdevice/watchmanage/watchmanage",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/regist/regist",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myinfo/myinfo",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTitleText": "MyHome",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF"
 	},
 	"tabBar": {
 		"color": "#C8C9CC",

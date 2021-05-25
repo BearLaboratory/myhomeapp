@@ -27,6 +27,7 @@ let updateUserInfoUrl = '/user/updateUserInfo'
 let userAppOnlineUrl = '/user/userAppOnline'
 let updateUserSelectedUrl = '/user/updateUserSelected'
 let getHaveNotReadUrl = '/user/getHaveNotRead'
+let getValidCodeUrl = '/frontend/validCode/getCodeByPhone'
 
 //消息相关
 let sendFamilyAddUserUrl = '/message/sendFamilyAddUser'
@@ -67,6 +68,7 @@ const install = (Vue, vm) => {
 	let userAppOnlineApi = (params = {}) => vm.$u.post(userAppOnlineUrl, params)
 	let updateUserSelectedApi = (params = {}) => vm.$u.post(updateUserSelectedUrl, params)
 	let getHaveNotReadApi = (params = {}) => vm.$u.get(getHaveNotReadUrl, params)
+	let getValidCodeApi = (params = {}) => vm.$u.get(getValidCodeUrl, params)
 
 	let sendFamilyAddUserApi = (params = {}) => vm.$u.post(sendFamilyAddUserUrl, params)
 	let getAllMessageApi = (params = {}) => vm.$u.get(getAllMessageUrl, params)
@@ -100,6 +102,7 @@ const install = (Vue, vm) => {
 		userAppOnlineApi,
 		updateUserSelectedApi,
 		getHaveNotReadApi,
+		getValidCodeApi,
 		sendFamilyAddUserApi,
 		getAllMessageApi,
 		readMessageApi,

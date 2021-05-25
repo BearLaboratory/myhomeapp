@@ -7,26 +7,25 @@
 				<text class="subTitle">最具极客范的开源智能家居系统</text>
 			</view>
 			<view class="login-info-box">
-				<u-field v-model="loginObj.phone" label="手机号" placeholder="请填写手机号" maxlength="11">
+				<u-field v-model="loginObj.phone" label="手机号" placeholder="请填写手机号" maxlength="11" :focus="true"
+					type="number">
 					<u-icon slot="icon" name="phone"></u-icon>
 				</u-field>
-				<u-field v-model="loginObj.password" label="密码" placeholder="请填写密码" type="password" maxlength="11">
+				<u-field v-model="loginObj.validCode" label="验证码" placeholder="请填写验证码" maxlength="6">
 					<u-icon slot="icon" name="lock"></u-icon>
+					<u-button size="mini" slot="right" type="success" @click="getCode"
+						:disabled="loginObj.phone==''||loginObj.phone.length!=11">{{codeText}}</u-button>
 				</u-field>
+				<u-verification-code ref="uCode" :seconds="seconds" @change="codeChange"></u-verification-code>
 				<view class="login-button-box">
-					<u-button type="success" class="btn" @click="doLogin" :disabled="loginObj.phone.length !=11||loginObj.password.length<6||loginObj.password.length>11">登录</u-button>
-				</view>
-				<view class="regist-box">
-					<view>
-						<text v-if="false">忘记密码?</text>
-					</view>
-					<text @click="gotoRegist">立即注册</text>
+					<u-button type="success" class="btn" @click="doLogin">登录</u-button>
 				</view>
 			</view>
 
 			<view class="another-login-box">
 				<view class="weixin-login-box" @click="gotoWeixinLogin">
-					<image src="../../static/login/weixin.png" mode="aspectFill" style="height: 80rpx;width: 80rpx;"></image>
+					<image src="../../static/login/weixin.png" mode="aspectFill" style="height: 80rpx;width: 80rpx;">
+					</image>
 					<text style="color: #C8C9CC;">微信登录</text>
 				</view>
 			</view>
@@ -50,7 +49,10 @@
 				loginObj: {
 					phone: '',
 					password: ''
-				}
+				},
+				codeText: '',
+				canClick: true,
+				seconds: 60
 			}
 		},
 		methods: {
@@ -59,7 +61,7 @@
 			 * 登录
 			 */
 			doLogin() {
-				if (this.$u.test.mobile(this.loginObj.phone) && this.$u.trim(this.loginObj.password) != '') {
+				if (this.$u.test.mobile(this.loginObj.phone) && this.$u.trim(this.loginObj.validCode) != '') {
 					this.$u.api.loginByPhonePasswordApi(this.loginObj).then(res => {
 						if (res.status) {
 							this.saveLoginData(res.data)
@@ -86,7 +88,7 @@
 					})
 				} else {
 					this.$refs.uToast.show({
-						title: '请正确填写信息',
+						title: '请正确手机号验证码',
 						type: 'error',
 						duration: 1500
 					})
@@ -108,12 +110,44 @@
 					title: '微信登录暂未开放',
 					type: 'warning'
 				})
+			},
+			codeChange(text) {
+				this.codeText = text;
+			},
+			end() {
+				this.canClick = true
+			},
+			start() {
+				this.canClick = false
+			},
+			getCode() {
+				if (this.$refs.uCode.canGetCode) {
+					let paramObj = {}
+					paramObj.phoneString = this.loginObj.phone
+					this.$u.api.getValidCodeApi(paramObj).then(res => {
+						if (res.status) {
+							this.$u.toast('验证码已发送')
+							this.$refs.uCode.start();
+						} else {
+							this.$u.toast(res.message)
+							console.log(res)
+
+						}
+					})
+				} else {
+					this.$u.toast('倒计时结束后再发送');
+				}
 			}
 		}
+
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+	.main-container {
+		background-color: #FFFFFF;
+	}
+
 	.login-box {
 		position: absolute;
 		left: 50%;
@@ -159,13 +193,6 @@
 				}
 			}
 
-			.regist-box {
-				display: flex;
-				justify-content: space-between;
-				margin-top: 20rpx;
-				font-size: 25rpx;
-				color: #C8C9CC;
-			}
 		}
 
 		.another-login-box {
