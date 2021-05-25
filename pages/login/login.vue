@@ -71,7 +71,7 @@
 									this.saveSelectedFamily(res2.data.family)
 									this.saveSelectedFloorId(res2.data.selectedFloorId)
 									this.setIsHolder(res2.data.isHolder)
-									//
+									//跳转至主页
 									uni.reLaunch({
 										url: '../index/index'
 									})
