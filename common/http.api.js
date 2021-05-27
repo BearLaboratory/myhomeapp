@@ -20,9 +20,9 @@ let checkIsHolerUrl = '/family/checkIsHoler'
 
 //用户相关
 let searchUserByPhoneUrl = '/user/searchUserByPhone'
-let loginByPhonePasswordUrl = '/user/loginByPhonePassword'
+let loginByValidCodeUrl = '/frontend/user/loginByPhone'
 let registByPhonePasswordUrl = '/user/registByPhonePassword'
-let getUserInfoUrl = '/user/getUserInfo'
+let getUserInfoUrl = '/frontend/user/getUserInfo'
 let updateUserInfoUrl = '/user/updateUserInfo'
 let userAppOnlineUrl = '/user/userAppOnline'
 let updateUserSelectedUrl = '/user/updateUserSelected'
@@ -61,7 +61,7 @@ const install = (Vue, vm) => {
 	let checkIsHolerApi = (params = {}) => vm.$u.get(checkIsHolerUrl, params)
 
 	let searchUserByPhoneApi = (params = {}) => vm.$u.get(searchUserByPhoneUrl, params)
-	let loginByPhonePasswordApi = (params = {}) => vm.$u.post(loginByPhonePasswordUrl, params)
+	let loginByValidCodeApi = (params = {}) => vm.$u.post(loginByValidCodeUrl, params)
 	let registByPhonePasswordApi = (params = {}) => vm.$u.post(registByPhonePasswordUrl, params)
 	let getUserInfoApi = (params = {}) => vm.$u.get(getUserInfoUrl, params)
 	let updateUserInfoApi = (params = {}) => vm.$u.post(updateUserInfoUrl, params)
@@ -95,7 +95,7 @@ const install = (Vue, vm) => {
 		confirmJoinApi,
 		checkIsHolerApi,
 		searchUserByPhoneApi,
-		loginByPhonePasswordApi,
+		loginByValidCodeApi,
 		registByPhonePasswordApi,
 		getUserInfoApi,
 		updateUserInfoApi,

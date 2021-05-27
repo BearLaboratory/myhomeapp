@@ -34,6 +34,18 @@
 				}
 				this.setNetWork(obj)
 			})
+			// 查询当前地址，根据地址大致判断是否进入家庭范围进行切换
+
+			uni.getLocation({
+				type: 'wgs84',
+				geocode: true,
+				success: function(res) {
+					if (res.address) {
+						console.log('详细地址', res.address)
+					}
+				}
+			})
+
 			if (!this.firstOpen) {
 				uni.reLaunch({
 					url: 'pages/index/index',

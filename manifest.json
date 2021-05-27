@@ -21,7 +21,8 @@
         },
         /* 模块配置 */
         "modules" : {
-            "Bluetooth" : {}
+            "Bluetooth" : {},
+            "Maps" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -54,11 +55,16 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {
-                "maps" : {},
+                "maps" : {
+                    "baidu" : {
+                        "appkey_ios" : "5z0G28E9UL4C4r7dHH51RS1lEKhIkpTt",
+                        "appkey_android" : "5z0G28E9UL4C4r7dHH51RS1lEKhIkpTt"
+                    }
+                },
                 "ad" : {}
             },
             "splashscreen" : {
-                "androidStyle" : "default",
+                "androidStyle" : "common",
                 "android" : {
                     "hdpi" : "C:/Users/BLab/Desktop/11.png",
                     "xhdpi" : "C:/Users/BLab/Desktop/22.png",

@@ -48,7 +48,7 @@
 			return {
 				loginObj: {
 					phone: '',
-					password: ''
+					validCode: ''
 				},
 				codeText: '',
 				canClick: true,
@@ -62,10 +62,13 @@
 			 */
 			doLogin() {
 				if (this.$u.test.mobile(this.loginObj.phone) && this.$u.trim(this.loginObj.validCode) != '') {
-					this.$u.api.loginByPhonePasswordApi(this.loginObj).then(res => {
+					this.$u.api.loginByValidCodeApi(this.loginObj).then(res => {
 						if (res.status) {
+							// 保存token
 							this.saveLoginData(res.data)
+							// 获取用户信息
 							this.$u.api.getUserInfoApi().then(res2 => {
+								console.log('res2', res2)
 								if (res2.status) {
 									this.saveUserInfo(res2.data.user)
 									this.saveSelectedFamily(res2.data.family)
@@ -130,8 +133,6 @@
 							this.$refs.uCode.start();
 						} else {
 							this.$u.toast(res.message)
-							console.log(res)
-
 						}
 					})
 				} else {

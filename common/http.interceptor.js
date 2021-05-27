@@ -9,6 +9,13 @@ const install = (Vue, vm) => {
 			baseUrl: 'https://myhomeapi.dengyi.pro',
 		})
 	}
+	Vue.prototype.$u.http.setConfig({
+		dataType: 'json',
+		// 配置请求头信息
+		header: {
+			'content-type': 'application/json;charset=UTF-8'
+		}
+	})
 	// 请求拦截，配置Token等参数
 	Vue.prototype.$u.http.interceptor.request = (config) => {
 		if (!vm.$store.state.netWork.connect) {
