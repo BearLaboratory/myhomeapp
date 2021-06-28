@@ -1,13 +1,14 @@
 <template>
 	<view class="main-container">
 		<normal-header pageName="消息详情"></normal-header>
-		<view style="padding: 20rpx;background-color: #FFFFFF;margin-top: 30rpx;margin-left: 30rpx;margin-right: 30rpx;" v-if="message.type==1">
+		<view
+			style="padding: 20rpx;background-color: #FFFFFF;margin-top: 30rpx;margin-left: 30rpx;margin-right: 30rpx;">
 			<view style="padding: 20rpx;">
-				<text>【{{message.fromUserName}}】邀请您加入 【{{message.familyName}}】</text>
+				<text>{{message.content}}</text>
 			</view>
 
-			<view style="padding: 30rpx;">
-				<u-button :type="message.hasRead=='true'?'':'success'" @click="comfirmJoinFamily" :disabled="message.hasRead=='true'">同意</u-button>
+			<view style="padding: 30rpx;" v-if="message.type==1">
+				<u-button type="success" @click="comfirmJoinFamily">同意加入</u-button>
 			</view>
 		</view>
 
@@ -27,8 +28,16 @@
 		},
 		onLoad(param) {
 			this.message = param
+			this.doLoadMessage()
 		},
 		methods: {
+			doLoadMessage() {
+				this.$u.api.getMessageByIdApi({
+					messageId: this.message.id
+				}).then(res => {
+					this.message = res.data
+				})
+			},
 			comfirmJoinFamily() {
 				this.$u.api.confirmJoinApi({
 					messageId: this.message.id

@@ -1,9 +1,9 @@
 <template>
 	<view style="height: 100%;">
-		<common-header :statusBarHeight="systemInfo.statusBarHeight" :floorArray="floorList" :roomArray="roomList"
-			@floorSelect="floorSelect" @roomSelect="roomSelect" :selectedFloorId="selectedFloorId"
-			:selectedRoomId="selectedRoomId" @searchConfirm="doSearchDevice"></common-header>
-		<view class="main-container" :style="{'padding-top': 135 + 750 * systemInfo.statusBarHeight / 375 + 'rpx'}">
+		<common-header @floorSelect="floorSelect" @roomSelect="roomSelect" @searchConfirm="doSearchDevice">
+		</common-header>
+		<view class="main-container"
+			:style="{'padding-top': 135 + 750 * $store.state.systemInfo.statusBarHeight / 375 + 'rpx'}">
 			<view class="main-box">
 				<view class="device-line">
 					<view class="device-card" v-for="(device,index) in realDeviceList" :key="device.id">
@@ -37,20 +37,38 @@
 							<text style="color: #000000;margin-top: 10rpx;">湿度: {{device.payload.humidity}}%</text>
 						</view>
 					</view>
-					<!-- 无设备提示 -->
-					<view class="no-device-wrapper" v-if="deviceList.length==0">
-						<u-empty src="../../static/device-64.png" text="无设备">
+					<!-- 无家庭提示 -->
+					<view class="no-device-wrapper" v-if="$store.state.familyList.length==0">
+						<u-empty src="../../static/common/family.png" text="无家庭信息">
 							<u-button type="success" slot="bottom" style="margin-top: 50rpx;"
-								@click="selectedFamily?gotoDeviceManage():gotoFamilyManage()">
-								{{selectedFamily?'添加设备':'请先完善家庭信息'}}
+								@click="gotoFamilyManage()">
+								添加家庭
 							</u-button>
 						</u-empty>
 					</view>
-					<!-- 未搜索到设备提示 -->
-					<view class="no-device-wrapper" v-if="deviceList.length!=0&&realDeviceList.length==0">
-						<u-empty src="../../static/device-64.png" text="未搜索到设备">
-							<u-button type="success" slot="bottom" style="margin-top: 50rpx;" @click="gotoDeviceManage">
-								添加设备</u-button>
+					<!-- 无楼层提示 -->
+					<view class="no-device-wrapper"
+						v-if="$store.state.familyList.length!=0 &&$store.state.floorList.length==0">
+						<u-empty src="../../static/common/floor.png" text="无楼层信息">
+							<u-button type="success" slot="bottom" style="margin-top: 50rpx;"
+								@click="gotoFloorManage()">
+								添加楼层
+							</u-button>
+						</u-empty>
+					</view>
+					<!-- 无房间提示 -->
+					<view class="no-device-wrapper"
+						v-if="$store.state.familyList.length!=0 &&$store.state.floorList.length!=0&&$store.state.roomList.length==0">
+						<u-empty src="../../static/common/floor.png" text="无房间信息">
+							<u-button type="success" slot="bottom" style="margin-top: 50rpx;" @click="gotoRoomManage()">
+								添加房间
+							</u-button>
+						</u-empty>
+					</view>
+					<!-- 无设备提示 -->
+					<view class="no-device-wrapper"
+						v-if="$store.state.familyList.length!=0 &&$store.state.floorList.length!=0&&$store.state.roomList.length!=0&&$store.state.deviceList.length==0">
+						<u-empty src="../../static/common/device.png" text="无收藏设备">
 						</u-empty>
 					</view>
 				</view>
@@ -71,8 +89,6 @@
 		},
 		data() {
 			return {
-				//楼层集合
-				floorList: [],
 				//房间集合
 				roomList: [],
 				//设备集合
@@ -81,121 +97,98 @@
 				realDeviceList: []
 			}
 		},
+		created() {
+			// 查询最新版本，判断是否需要升级
+		},
 		onShow() {
-			this.loadFloorList()
 			var that = this
 			if (this.selectedFamily) {
-				that.goEasy.subscribe({
-					channel: 'devicePush::' + that.selectedFamily.id,
-					onMessage: function(message) {
-						let contentObj = JSON.parse(message.content)
-						for (var i = 0; i < that.realDeviceList.length; i++) {
-							if (that.realDeviceList[i].id == contentObj.deviceId) {
-								switch (that.realDeviceList[i].type) {
-									case 1:
-										if (contentObj.online != undefined) {
-											that.realDeviceList[i].online = contentObj.online
-										}
-										that.realDeviceList[i].open = contentObj.open
-										break
-									case 2:
-										if (contentObj.online != undefined) {
-											that.realDeviceList[i].online = contentObj.online
-										} else {
-											that.realDeviceList[i].payload = contentObj.payload
-										}
-										break
-									default:
-										console.log('设备状态设备类型不匹配')
-								}
-							}
-						}
-					},
-					onSuccess: function() {
-						console.log("设备状态Channel订阅成功。");
-					},
-					onFailed: function(error) {
-						console.log("设备状态Channel订阅失败, 错误编码：" + error.code + " 错误信息：" + error.content)
-					}
-				})
+				// that.goEasy.subscribe({
+				// 	channel: 'devicePush::' + that.selectedFamily.id,
+				// 	onMessage: function(message) {
+				// 		let contentObj = JSON.parse(message.content)
+				// 		for (var i = 0; i < that.realDeviceList.length; i++) {
+				// 			if (that.realDeviceList[i].id == contentObj.deviceId) {
+				// 				switch (that.realDeviceList[i].type) {
+				// 					case 1:
+				// 						if (contentObj.online != undefined) {
+				// 							that.realDeviceList[i].online = contentObj.online
+				// 						}
+				// 						that.realDeviceList[i].open = contentObj.open
+				// 						break
+				// 					case 2:
+				// 						if (contentObj.online != undefined) {
+				// 							that.realDeviceList[i].online = contentObj.online
+				// 						} else {
+				// 							that.realDeviceList[i].payload = contentObj.payload
+				// 						}
+				// 						break
+				// 					default:
+				// 						console.log('设备状态设备类型不匹配')
+				// 				}
+				// 			}
+				// 		}
+				// 	},
+				// 	onSuccess: function() {
+				// 		console.log("设备状态Channel订阅成功。");
+				// 	},
+				// 	onFailed: function(error) {
+				// 		console.log("设备状态Channel订阅失败, 错误编码：" + error.code + " 错误信息：" + error.content)
+				// 	}
+				// })
 			}
 		},
-		computed: {
-			...mapState(['selectedFamily', 'selectedFloorId', 'selectedRoomId', 'systemInfo', 'login'])
-		},
 		methods: {
-			...mapMutations(['saveSelectedFloorId', 'saveSelectedRoomId']),
-			/**
-			 * 加载所有楼层信息
-			 */
-			loadFloorList() {
-				if (this.selectedFamily) {
-					this.$u.api.floorListApi({
-						familyId: this.selectedFamily.id
-					}).then(res => {
-						if (res.status) {
-							this.floorList = res.data
-						}
-					})
-				}
-			},
-			loadRoomListByFloorId(fId) {
+			loadRoomListByFloorId() {
 				this.$u.api.roomListByFloorIdApi({
-					floorId: fId
+					floorId: this.$store.state.selectedFloor.id
 				}).then(res => {
 					if (res.status) {
-						this.roomList = res.data
-						if (res.data.length == 0) {
-							this.deviceList = []
-						}
+						this.$store.commit('saveRoomList', res.data)
 					}
 				})
 			},
-			/**
-			 * 根据房间ID查询所有设备列表
-			 * @param {Object} roomId
-			 */
-			loadDeviceByRoomSelectd(roomId) {
+			loadDeviceByRoomSelectd() {
 				this.$u.api.deviceListByRoomIdApi({
-					familyId: this.selectedFamily.id,
-					roomId: roomId,
+					familyId: this.$store.state.selectedFamily.id,
+					roomId: this.$store.state.selectedRoom.id,
 					favorite: true
 				}).then(res => {
 					if (res.status) {
-						this.deviceList = res.data
-						this.realDeviceList = res.data
+						this.$store.commit('saveFavoriteDeviceList', res.data)
 					}
 				})
 			},
-			/**
-			 * 组件中楼层选择,选择后查询所有房间
-			 * @param {Object} e 楼层ID
-			 */
-			floorSelect(e) {
-				this.loadRoomListByFloorId(e)
-				this.saveSelectedFloorId(e)
-				this.$u.api.updateUserSelectedApi({
-					selectedFloorId: e
-				}).then(res => {
-					console.log('更新用户选择楼层成功')
+			floorSelect() {
+				this.$u.api.uploadSelectedFloorApi(this.$store.state.selectedFloor).then(res => {
+					this.loadRoomListByFloorId()
 				})
 			},
-			/**
-			 * 房间选择
-			 * @param {Object} e 房间ID
-			 */
-			roomSelect(e) {
-				this.loadDeviceByRoomSelectd(e)
-				this.saveSelectedRoomId(e)
-			},
-			gotoDeviceManage() {
-				uni.navigateTo({
-					url: '../devicemanage/devicemanage'
+			roomSelect() {
+				this.$u.api.uploadSelectedRoomApi(this.$store.state.selectedRoom).then(res => {
+					if (res.status) {
+						this.loadDeviceByRoomSelectd()
+					}
 				})
 			},
 			gotoFamilyManage() {
 				uni.navigateTo({
 					url: '../familymanage/familymanage'
+				})
+			},
+			gotoFloorManage() {
+				uni.navigateTo({
+					url: '../floormanage/floormanage'
+				})
+			},
+			gotoRoomManage() {
+				uni.navigateTo({
+					url: '../roommanage/roommanage'
+				})
+			},
+			gotoDeviceManage() {
+				uni.navigateTo({
+					url: '../devicemanage/devicemanage'
 				})
 			},
 			/**

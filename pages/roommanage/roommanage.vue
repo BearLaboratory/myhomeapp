@@ -8,20 +8,23 @@
 				</view>
 				<view class="action-box">
 					<view class="" style="display: flex;align-items: center;margin-right: 30rpx;">
-						<text style="font-size: 22rpx;margin-right: 10rpx;">{{selectedFloor.label?selectedFloor.label:'选择楼层'}}</text>
+						<text
+							style="font-size: 22rpx;margin-right: 10rpx;">{{selectedFloor.label?selectedFloor.label:'选择楼层'}}</text>
 						<u-icon name="arrow-down-fill" @click="floorSelectShow=true" size="30"></u-icon>
 					</view>
 					<view class="">
-						<u-icon name="plus" @click="showAddMask" size="40" :color="selectedFloor.label?'#303030':'#c8c9cc'"></u-icon>
+						<u-icon name="plus" @click="showAddMask" size="40"
+							:color="selectedFloor.label?'#303030':'#c8c9cc'"></u-icon>
 					</view>
 				</view>
 			</view>
 			<!-- body -->
 			<view class="item-box-wrapper">
 				<!-- 无数据提示 -->
-				<u-empty text="暂无房间数据" mode="data" v-if="roomArray.length==0"></u-empty>
+				<u-empty text="暂无房间数据" mode="data" v-if="$store.state.roomList.length==0"></u-empty>
 				<u-cell-group v-else>
-					<u-cell-item :title="room.name" v-for="(room,index) in roomArray" :key='index' :arrow="false">
+					<u-cell-item :title="room.name" v-for="(room,index) in $store.state.roomList" :key='index'
+						:arrow="false">
 						<u-icon name="setting" slot="right-icon" @click="showModifyMask(room)"></u-icon>
 					</u-cell-item>
 				</u-cell-group>
@@ -39,8 +42,10 @@
 				</view>
 			</view>
 		</u-mask>
+		
+		
 		<!-- 修改楼层mask -->
-		<u-mask :show="modifyMaskShow">
+		<u-mask :show="modifyMaskShow" >
 			<view class="add-box">
 				<view style="padding: 20rpx;display: flex;justify-content: flex-end;">
 					<u-icon name="close" @click="modifyMaskShow=false"></u-icon>
@@ -51,14 +56,12 @@
 				</view>
 			</view>
 		</u-mask>
-		<u-select v-model="floorSelectShow" mode="single-column" :list="floorList" value-name="id" label-name="name" @confirm="selectConfirm"></u-select>
+		<u-select v-model="floorSelectShow" mode="single-column" :list="$store.state.floorList" value-name="id"
+			label-name="name" @confirm="selectConfirm"></u-select>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex'
 	import NormalHeader from '../../components/NormalHeader.vue'
 	export default {
 		components: {
@@ -69,18 +72,13 @@
 				floorSelectShow: false,
 				addMaskShow: false,
 				modifyMaskShow: false,
-				floorList: [],
 				selectedFloor: {},
-				roomArray: [],
 				roomName: '',
 				modifyData: {}
 			}
 		},
-		onShow() {
-			this.loadFloorList()
-		},
-		computed: {
-			...mapState(['selectedFamily'])
+		created() {
+			console.log(this.$store.state.floorList)
 		},
 		methods: {
 			/**
@@ -95,7 +93,7 @@
 				this.$u.api.roomAddOrUpdateApi({
 					name: this.roomName,
 					floorId: this.selectedFloor.value,
-					familyId: this.selectedFamily.id
+					familyId: this.$store.state.selectedFamily.id
 				}).then(res => {
 					if (res.status) {
 						this.loadRoomsByFloorId(this.selectedFloor.value)
@@ -116,25 +114,12 @@
 					}
 				})
 			},
-			/**
-			 * 加载所有楼层信息
-			 */
-			loadFloorList() {
-				this.$u.api.floorListApi({
-					familyId: this.selectedFamily.id
-				}).then(res => {
-					if (res.status) {
-						this.floorList = res.data
-					}
-				})
-
-			},
 			loadRoomsByFloorId(floorId) {
 				this.$u.api.roomListByFloorIdApi({
 					floorId: floorId
 				}).then(res => {
 					if (res.status) {
-						this.roomArray = res.data
+						this.$store.commit('saveRoomList', res.data)
 					}
 				})
 			},

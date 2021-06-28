@@ -4,7 +4,8 @@
 		<view class="header-box-wrapper">
 			<view class="header-box">
 				<text>MyHome</text>
-				<text style="margin-top: 30rpx;font-size: 30rpx;color: #C8C9CC;">v{{version}}</text>
+				<text
+					style="margin-top: 30rpx;font-size: 30rpx;color: #C8C9CC;">{{$store.state.appInfo.versionName}}</text>
 			</view>
 		</view>
 		<u-cell-group>
@@ -24,21 +25,9 @@
 			CompanyInfo
 		},
 		data() {
-			return {
-				logoUrl: '../../static/logo.png',
-				version: ''
-
-			}
-		},
-		onLoad() {
-			this.loadVersion()
+			return {}
 		},
 		methods: {
-			loadVersion() {
-				plus.runtime.getProperty(plus.runtime.appid, (widgetInfo) => {
-					this.version = widgetInfo.version
-				})
-			},
 			gotoVersionInfo() {
 				uni.navigateTo({
 					url: '../systeminfo/versioninfo'
@@ -100,13 +89,21 @@
 													content: '是否立即安装更新并重启APP?',
 													success: function(res) {
 														if (res.confirm) {
-															plus.runtime.install(downloadResult.tempFilePath, {
-																force: true
-															}, function() {
-																plus.runtime.restart();
-															}, function(e) {
-																console.error('安装失败...', e);
-															})
+															plus.runtime.install(
+																downloadResult
+																.tempFilePath, {
+																	force: true
+																},
+																function() {
+																	plus.runtime
+																		.restart();
+																},
+																function(e) {
+																	console
+																		.error(
+																			'安装失败...',
+																			e);
+																})
 														}
 													}
 												})

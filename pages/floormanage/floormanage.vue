@@ -14,9 +14,10 @@
 			</view>
 			<view class="item-box-wrapper">
 				<!-- 无数据提示 -->
-				<u-empty text="暂无楼层数据" mode="data" v-if="floorArray.length==0"></u-empty>
+				<u-empty text="暂无楼层数据" mode="data" v-if="$store.state.floorList.length==0"></u-empty>
 				<u-cell-group v-else>
-					<u-cell-item :title="floor.name" v-for="(floor,index) in floorArray" :key='index' :arrow="false">
+					<u-cell-item :title="floor.name" v-for="(floor,index) in $store.state.floorList" :key='index'
+						:arrow="false">
 						<u-icon name="setting" slot="right-icon" @click="showModify(floor)"></u-icon>
 					</u-cell-item>
 				</u-cell-group>
@@ -50,9 +51,6 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex'
 	import NormalHeader from '../../components/NormalHeader.vue'
 	export default {
 		components: {
@@ -63,14 +61,10 @@
 				addMaskShow: false,
 				modifyMaskShow: false,
 				floorName: '',
-				floorArray: [],
 				modifyFloorData: {}
 			}
 		},
-		computed: {
-			...mapState(['selectedFamily'])
-		},
-		onShow() {
+		created() {
 			this.loadData()
 		},
 		methods: {
@@ -78,15 +72,17 @@
 				this.addMaskShow = false
 				this.floorName = ''
 			},
-			/**
-			 * 从本地获取楼层信息，如果没有去云端查询后保存在本地
-			 */
 			loadData() {
-				this.$u.api.floorListApi({
-					familyId: this.selectedFamily.id
+				this.$u.api.floorListByFamilyIApi({
+					familyId: this.$store.state.selectedFamily.id
 				}).then(res => {
 					if (res.status) {
-						this.floorArray = res.data
+						this.$store.commit('saveFloorList', res.data)
+						if (res.data.length > 0) {
+							if (!this.$store.state.selectedFloor) {
+								this.$store.commit('saveSelectedFloor', res.data[0])
+							}
+						}
 					}
 				})
 			},
@@ -94,7 +90,7 @@
 				if (this.floorName && this.$u.trim(this.floorName) != '') {
 					this.$u.api.floorAddOrUpdateApi({
 						name: this.floorName,
-						familyId: this.selectedFamily.id
+						familyId: this.$store.state.selectedFamily.id
 					}).then(res => {
 						if (res.status) {
 							this.addMaskShow = false

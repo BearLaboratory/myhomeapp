@@ -1,148 +1,103 @@
 <template>
-	<view class="header-box" :style="{'padding-top':statusBarHeight+'px'}">
+	<view class="header-box" :style="{'padding-top':$store.state.systemInfo.statusBarHeight+'px'}">
 		<view class="header-wrapper">
-			<view class="search-box" :style="{'width':(searchShow?'80%':'20%')}">
-				<u-icon name="search" size="35" @click="searchShow = (!searchShow)"></u-icon>
-				<view style="width: 65%;margin-left: 30rpx;" v-show="searchShow">
-					<u-input v-model="searchInput" type="text" placeholder="请输入设备名" maxlength="10" :border="true" height="50" :trim="true"
-					 :focus="searchShow" confirm-type="search" @confirm="searchConfirm" @clear="clearConfirm" />
+			<!-- 设备搜索框 -->
+			<view class="search-box-wrapper" :style="{'width':(searchShow?'100%':'20%')}">
+				<view class="search-box" v-show="$store.state.deviceList.length!=0">
+					<u-icon name="search" size="35" @click="searchShow = !searchShow"></u-icon>
+					<view style="width: 80%;margin-left: 20rpx;" v-show="searchShow">
+						<u-input v-model="searchInput" type="text" placeholder="请输入设备名" maxlength="10" :border="true"
+							height="50" :trim="true" :focus="searchShow" confirm-type="search" @confirm="searchConfirm"
+							@clear="clearConfirm"></u-input>
+					</view>
+					<u-icon name="close" size="30" @click="searchShow = !searchShow" style="margin-left: 20rpx;"
+						v-if="searchShow"></u-icon>
 				</view>
 			</view>
+			<!-- slogan框 -->
 			<view class="slogan-box" v-show="!searchShow">
 				<text>MyHome</text>
 			</view>
-			<view class="select-box">
-				<text style="font-size: 24rpx;margin-right: 10rpx;">{{selectedFloor.label?selectedFloor.label:'选择楼层'}}</text>
-				<u-icon name="arrow-down-fill" size="35" color="#c8c9cc" @click="selectFloorSelectShow"></u-icon>
-				<u-select v-model="selectFloorShow" :list="floorArray" value-name="id" label-name="name" @confirm="selectConfirm"
-				 :default-value="[selectedFloorIndex]"></u-select>
+			<!-- 家庭选择框 -->
+			<view class="select-box-wrapper">
+				<view class="select-box" v-show="$store.state.floorList.length!=0">
+					<text
+						style="font-size: 25rpx;margin-right: 10rpx;">{{$store.state.selectedFloor?$store.state.selectedFloor.name:'选择楼层'}}</text>
+					<u-icon name="arrow-down-fill" size="30" color="#c8c9cc" @click="selectFloorSelectShow"></u-icon>
+					<u-select v-model="selectFloorShow" :list="$store.state.floorList" value-name="id" label-name="name"
+						@confirm="selectConfirm" :default-value="[selectedFloorIndex]"></u-select>
+				</view>
 			</view>
 		</view>
 		<view class="list-wrapper">
 			<!-- 房间选择标签 -->
-			<u-tabs ref="tabs" :list="realRoomArray" active-color="#303030" inactive-color="#c8c9cc" :current="selectedRoomIndex"
-			 bar-width="60" :show-bar="false" @change="roomChange" height="80"></u-tabs>
+			<u-tabs ref="tabs" :list="$store.state.roomList" active-color="#303030" inactive-color="#c8c9cc"
+				:current="selectedRoomIndex" bar-width="60" :show-bar="false" @change="roomChange" height="80"></u-tabs>
 		</view>
 
 	</view>
 </template>
-
 <script>
 	export default {
-		props: {
-			statusBarHeight: {
-				type: Number,
-				require: true
-			},
-			floorArray: {
-				type: Array,
-				require: true
-			},
-			roomArray: {
-				type: Array,
-				require: true
-			},
-			selectedFloorId: {
-				type: String,
-				require: true
-			},
-			selectedRoomId: {
-				type: String,
-				require: true
-			}
-		},
-		watch: {
+		computed: {
 			/**
-			 * 监视变化
-			 * @param {Object} newValue
-			 * @param {Object} oldValue
+			 * 被选中楼层的ID
 			 */
-			roomArray(newValue, oldValue) {
-				if (newValue.length != 0) {
-					this.realRoomArray = newValue
-					if (this.realRoomArray.length != 0) {
-						this.$emit('roomSelect', this.realRoomArray[0].id)
+			selectedFloorIndex() {
+				for (var i = 0; i < this.$store.state.floorList.length; i++) {
+					if (this.$store.state.floorList[i].id === this.$store.state.selectedFloor.id) {
+						return i
 					}
 				}
 			},
 			/**
-			 * 监听路程数据
-			 * @param {Object} nv
-			 * @param {Object} ov
+			 * 被选中房间的ID
 			 */
-			floorArray(nv, ov) {
-				if (nv.length != 0) {
-					for (var i = 0; i < nv.length; i++) {
-						if (nv[i].id == this.selectedFloorId) {
-							this.selectedFloorIndex = i
-						}
+			selectedRoomIndex() {
+				for (var i = 0; i < this.$store.state.roomList.length; i++) {
+					if (this.$store.state.roomList[i].id === this.$store.state.selectedRoom.id) {
+						return i
 					}
-					let firstObj = nv[this.selectedFloorIndex]
-					this.$emit('floorSelect', firstObj.id)
-					this.selectedFloor.label = firstObj.name
+				}
+			}
 
-				}
-			},
-			/**
-			 * 监听楼层改变
-			 */
-			selectedFloorId(nv, ov) {
-				if (nv && nv != '') {
-					for (var i = 0; i < this.floorArray.length; i++) {
-						if (this.floorArray[i].id == nv) {
-							this.selectedFloorIndex = i
-						}
-					}
-					let firstObj = this.floorArray[this.selectedFloorIndex]
-					this.$emit('floorSelect', firstObj.id)
-					this.selectedFloor.label = firstObj.name
-				}
-			},
-			selectedRoomId(nv, ov) {
-				if (nv && nv != '') {
-					for (var i = 0; i < this.realRoomArray.length; i++) {
-						if (this.realRoomArray[i].id == nv) {
-							this.selectedRoomIndex = i
-						}
-					}
-					this.$emit('roomSelect', nv)
-				}
-			}
 		},
 		data() {
 			return {
-				realRoomArray: [],
-				selectedFloor: {},
 				selectFloorShow: false,
-				selectedRoomIndex: 0,
-				selectedFloorIndex: 0,
 				searchShow: false,
 				searchInput: ''
 			}
 		},
 		methods: {
-			/** 楼层选择确认
+			/** 
+			 * 楼层选择确认
 			 * @param {Object} e 数组，被选择的.value label
 			 */
 			selectConfirm(e) {
-				this.selectedFloor = e[0]
-				for (var i = 0; i < this.floorArray.length; i++) {
-					if (this.floorArray[i].id == e[0].value) {
-						this.selectedFloorIndex = i
+				//先遍历整个集合
+				this.$store.state.floorList.forEach(item => {
+					if (item.id === e[0].value && this.$store.state.selectedFloor.id != e[0].value) {
+						this.$store.commit('saveSelectedFloor', item)
+						this.$emit('floorSelect', {})
 					}
-				}
-				this.$emit('floorSelect', e[0].value)
+				})
+
 			},
 			/**
 			 * 房间选择确认
-			 * @param {Object} e
+			 * @param {Object} e index从0开始
 			 */
 			roomChange(e) {
-				this.selectedRoomIndex = e
-				this.$emit('roomSelect', this.realRoomArray[e].id)
+				for (var i = 0; i < this.$store.state.roomList.length; i++) {
+					if (i === e && this.$store.state.selectedRoom.id != this.$store.state.roomList[i].id) {
+						this.$store.commit('saveSelectedRoom', this.$store.state.roomList[i])
+						this.$emit('roomSelect', {})
+					}
+				}
 			},
 			selectFloorSelectShow() {
-				this.selectFloorShow = true && this.floorArray.length != 0
+				this.selectFloorShow = true
 
 			},
 			searchConfirm() {
@@ -169,31 +124,38 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding-left: 30rpx;
-			padding-right: 30rpx;
-			height: 35rpx;
+			padding: 0 30rpx;
+			height: 40rpx;
 
-			.search-box {
-				display: flex;
-				align-items: center;
+			.search-box-wrapper {
+				width: 20%;
+
+				.search-box {
+					display: flex;
+					align-items: center;
+				}
 			}
-
 
 			.slogan-box {
 				display: flex;
 				justify-content: center;
-				font-size: 35rpx;
+				font-size: 40rpx;
 				font-weight: bold;
 				color: #303030;
 				width: 60%;
 			}
 
-			.select-box {
-				display: flex;
-				align-items: center;
+			.select-box-wrapper {
 				width: 20%;
-				justify-content: flex-end;
+
+				.select-box {
+					display: flex;
+					align-items: center;
+					justify-content: flex-end;
+				}
 			}
+
+
 		}
 
 		.list-wrapper {

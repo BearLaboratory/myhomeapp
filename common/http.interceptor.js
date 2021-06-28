@@ -2,7 +2,7 @@ const install = (Vue, vm) => {
 	//本地开发环境时自行修改
 	if (process.env.NODE_ENV === 'development') {
 		Vue.prototype.$u.http.setConfig({
-			baseUrl: 'http://ayilink2019.eicp.vip',
+			baseUrl: 'http://ayilink2019.eicp.vip/frontend',
 		})
 	} else {
 		Vue.prototype.$u.http.setConfig({
@@ -21,7 +21,7 @@ const install = (Vue, vm) => {
 		if (!vm.$store.state.netWork.connect) {
 			return vm.$u.toast('请连接网络')
 		} else {
-			config.header.token = vm.$store.state.token;
+			config.header.token = vm.$store.state.loginInfo.token;
 			return config;
 		}
 

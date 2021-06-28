@@ -11,7 +11,7 @@
 					type="number">
 					<u-icon slot="icon" name="phone"></u-icon>
 				</u-field>
-				<u-field v-model="loginObj.validCode" label="验证码" placeholder="请填写验证码" maxlength="6">
+				<u-field v-model="loginObj.validCode" label="验证码" placeholder="请填写验证码" maxlength="6" type="number">
 					<u-icon slot="icon" name="lock"></u-icon>
 					<u-button size="mini" slot="right" type="success" @click="getCode"
 						:disabled="loginObj.phone==''||loginObj.phone.length!=11">{{codeText}}</u-button>
@@ -36,9 +36,6 @@
 </template>
 
 <script>
-	import {
-		mapMutations
-	} from 'vuex'
 	import CompanyInfo from '../../components/CompanyInfo.vue'
 	export default {
 		components: {
@@ -56,7 +53,6 @@
 			}
 		},
 		methods: {
-			...mapMutations(['saveLoginData', 'saveUserInfo', 'saveSelectedFamily', 'saveSelectedFloorId', 'setIsHolder']),
 			/**
 			 * 登录
 			 */
@@ -64,16 +60,25 @@
 				if (this.$u.test.mobile(this.loginObj.phone) && this.$u.trim(this.loginObj.validCode) != '') {
 					this.$u.api.loginByValidCodeApi(this.loginObj).then(res => {
 						if (res.status) {
-							// 保存token
-							this.saveLoginData(res.data)
+							this.$store.commit('saveLoginInfo', {
+								token: res.data,
+								logined: true
+							})
 							// 获取用户信息
-							this.$u.api.getUserInfoApi().then(res2 => {
-								console.log('res2', res2)
-								if (res2.status) {
-									this.saveUserInfo(res2.data.user)
-									this.saveSelectedFamily(res2.data.family)
-									this.saveSelectedFloorId(res2.data.selectedFloorId)
-									this.setIsHolder(res2.data.isHolder)
+							this.$u.api.getUserInfoApi().then(ures => {
+								console.log('ures', ures)
+								if (ures.status) {
+									console.log('userinfo', ures.data)
+									//1. 云端同步信息
+									this.$store.commit('saveUserInfo', ures.data.user)
+									this.$store.commit('saveFamilyList', ures.data.familyList)
+									this.$store.commit('saveSelectedFamily', ures.data.selectedFamily)
+									this.$store.commit('saveIsSelectedFamilyHolder', ures.data
+										.isSelectedFamilyHolder)
+									this.$store.commit('saveFloorList', ures.data.floorList)
+									this.$store.commit('saveSelectedFloor', ures.data.selectedFloor)
+									this.$store.commit('saveRoomList', ures.data.roomList)
+									this.$store.commit('saveSelectedRoom', ures.data.selectedRoom)
 									//跳转至主页
 									uni.reLaunch({
 										url: '../index/index'

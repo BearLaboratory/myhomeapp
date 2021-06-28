@@ -1,17 +1,27 @@
 <script>
 	import {
-		mapState,
-		mapMutations
+		mapState
 	} from 'vuex'
 	export default {
 		onLaunch: function() {
-			//获取手机基本信息，用作页面数据计算
-			this.setSystemInfo(uni.getSystemInfoSync())
-			//锁定屏幕不旋转
+			//01 检查最新APP,如果有热更新包则下载安装,整包更新提示用户下载安装
+
+			//0 最先调这个接口，因为异步所以最先调用最先查询当前地址，根据地址大致判断是否进入家庭范围进行切换
+			uni.getLocation({
+				type: 'wgs84',
+				geocode: true,
+				success: (res) => {
+					if (res.address) {
+						this.$store.commit('savePositionInfo', res.address)
+						console.log('详细地址信息===>', this.$store.state.positionInfo)
+					}
+				}
+			})
+			//1. 锁定屏幕不旋转
 			plus.screen.lockOrientation('portrait-primary')
-			//将本地存储信息同步到vuex
-			this.initData()
-			//获取并监听网络状态
+			//2. 获取手机基本信息，用作页面数据计算
+			this.$store.commit('saveSystemInfo', uni.getSystemInfoSync())
+			//3. 获取并监听网络状态
 			uni.getNetworkType({
 				success: (res) => {
 					let obj = {}
@@ -21,7 +31,7 @@
 						obj.connect = true
 						obj.type = res.networkType
 					}
-					this.setNetWork(obj)
+					this.$store.commit('saveNetWorkInfo', obj)
 				}
 			})
 			uni.onNetworkStatusChange((res) => {
@@ -32,21 +42,15 @@
 					obj.connect = true
 					obj.type = res.networkType
 				}
-				this.setNetWork(obj)
-			})
-			// 查询当前地址，根据地址大致判断是否进入家庭范围进行切换
-
-			uni.getLocation({
-				type: 'wgs84',
-				geocode: true,
-				success: function(res) {
-					if (res.address) {
-						console.log('详细地址', res.address)
-					}
-				}
+				this.$store.commit('saveNetWorkInfo', obj)
 			})
 
-			if (!this.firstOpen) {
+			//4. 将本地存储信息同步到vuex，如果用户没有登录就没有必要去同步！！！！！
+			this.$store.commit('initData')
+
+
+
+			if (!this.$store.state.firstOpen) {
 				uni.reLaunch({
 					url: 'pages/index/index',
 					success() {
@@ -56,7 +60,7 @@
 				})
 			} else {
 				//第一次打开应用
-				if (this.login) {
+				if (this.$store.state.loginInfo.logined) {
 					//已登录跳转引导页
 					uni.reLaunch({
 						url: 'pages/guide/guide',
@@ -106,7 +110,7 @@
 		},
 		onShow: function() {
 			//每次页面显示时如果用户已登录则上报用户在线状态
-			if (this.login && this.selectedFamily) {
+			if (this.$store.state.login && this.selectedFamily) {
 				this.$u.api.userAppOnlineApi({
 					familyId: this.selectedFamily.id,
 					userId: this.userInfo.id,
@@ -120,7 +124,7 @@
 		},
 		onHide: function() {
 			//用户已登录页面隐藏时上报用户离线
-			if (this.login && this.selectedFamily) {
+			if (this.$store.state.login && this.selectedFamily) {
 				this.$u.api.userAppOnlineApi({
 					familyId: this.selectedFamily.id,
 					userId: this.userInfo.id,
@@ -132,11 +136,8 @@
 				})
 			}
 		},
-		methods: {
-			...mapMutations(['initData', 'setSystemInfo', 'setNetWork'])
-		},
 		computed: {
-			...mapState(['login', 'selectedFamily', 'token', 'userInfo', 'firstOpen'])
+			...mapState(['selectedFamily', 'token', 'userInfo'])
 		}
 	}
 </script>

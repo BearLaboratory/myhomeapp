@@ -3,13 +3,14 @@
 		<normal-header pageName="消息"></normal-header>
 		<view class="message-item" @click="gotoMessageDetail(message)" v-for="message in messageList" :key="message.id">
 			<view class="item-header-box">
-				<u-tag :text="message.hasRead?'已读':'未读'" :type="message.hasRead?'info':'warning'" size="mini" shape="circle" />
+				<u-tag :text="message.hasRead?'已读':'未读'" :type="message.hasRead?'info':'warning'" size="mini"
+					shape="circle" />
 			</view>
 			<view class="item-body-box">
-				<text>【{{message.fromUserName}}】邀请您加入 【{{message.familyName}}】</text>
+				<text>{{message.content}}</text>
 			</view>
 			<view class="item-bottom-box">
-				<text style="font-size: 20rpx;">{{message.createTime}}</text>
+				<text style="font-size: 20rpx;">创建时间：{{message.createTime}}</text>
 			</view>
 		</view>
 		<!-- 无数据提示 -->
@@ -29,41 +30,29 @@
 				messageList: []
 			}
 		},
-		onShow() {
+		created() {
 			this.loadMessage()
 		},
 		methods: {
 			loadMessage() {
-				this.$u.api.getAllMessageApi().then(res => {
+				this.$u.api.allMessageApi().then(res => {
 					if (res.status) {
 						this.messageList = res.data
 					}
 				})
 			},
-			/**
-			 * 读取信息后跳转详情页
-			 * @param {Object} messageData
-			 */
 			gotoMessageDetail(messageData) {
-				if (messageData.hasRead) {
-					uni.navigateTo({
-						url: './messagedetail?id=' + messageData.id + '&hasRead=' + messageData.hasRead + '&type=' + messageData.type +
-							'&createTime=' + messageData.createTime + '&familyName=' + messageData.familyName + '&fromUserName=' +
-							messageData.fromUserName
-					})
-				} else {
-					this.$u.api.readMessageApi({
-						messageId: messageData.id
-					}).then(res => {
-						if (res.status) {
-							uni.navigateTo({
-								url: './messagedetail?id=' + messageData.id + '&hasRead=' + messageData.hasRead + '&type=' + messageData.type +
-									'&createTime=' + messageData.createTime + '&familyName=' + messageData.familyName + '&fromUserName=' +
-									messageData.fromUserName
-							})
-						}
-					})
-				}
+				//上报已读
+				this.$u.api.readMessageApi({
+					messageId: messageData.id
+				}).then(res => {
+					if (res.status) {
+						this.loadMessage()
+					}
+				})
+				uni.navigateTo({
+					url: '../messagemanage/messagedetail?id=' + messageData.id
+				})
 			}
 		}
 	}
@@ -81,6 +70,7 @@
 		.item-header-box {
 			display: flex;
 			justify-content: flex-end;
+			margin-bottom: 10rpx;
 		}
 
 		.item-body-box {

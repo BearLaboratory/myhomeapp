@@ -2,8 +2,7 @@
 	"easycom": {
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/guide/guide",
 			"style": {
 				"app-plus": {
@@ -159,6 +158,13 @@
 				}
 			}
 
+		},
+		{
+			"path": "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+			"style": {
+				"navigationBarTitleText": "选择头像",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
 		}
 	],
 	"globalStyle": {
